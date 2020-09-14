@@ -50,16 +50,20 @@ namespace CelsiusProWeatherApp.DataAccess
                 var numberOfRow = firstSheet.Dimension.Rows;
                 var numberOfColumns = firstSheet.Dimension.Columns;
 
-                for (int i = 2; i <= numberOfRow; i++)
+                for (int i = 3; i <= numberOfRow; i++)
                 {
-                    modelBuilder.Entity<Station>().HasData(
-                        new Station()
-                        {
-                            Id = Guid.NewGuid(),
-                            Name = firstSheet.Cells[$"A{i}"].Text,
-                            Lat = firstSheet.Cells[$"B{i}"].Text,
-                            Lon = firstSheet.Cells[$"C{i}"].Text
-                        });
+                    for (int j = 2; j <= 8; j++)
+                    {
+                        modelBuilder.Entity<Weather>().HasData(
+                          new Weather()
+                          {
+                              Id = Guid.NewGuid(),
+                              Date = (DateTimeOffset)firstSheet.Cells[$"A{i}"].Value,
+                              Station = Stations.FirstOrDefault(a => a.Id == new Guid("7eba244-620f-492b-b0de-59683aaa5633")),
+                              TypeOfIndicator = j < 5 ? "Percipitation" : "Temperature",
+                              Value = firstSheet.Cells[$"{(Char)((65) + (j - 1))}{i}"].Text
+                          });
+                    }
                 }
             }
 
